@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic Bitmap Text with p5.js</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+    <p id="dynamicText">Hello World</p>
+    <button onclick="changeText()">Change Text</button>
+
+    <script>
+        let gfx; // Off-screen graphics buffer
+        let blockSize = 10; // Size of the 'bitmap' blocks
+
+        function setup() {
+            createCanvas(1800, 400); // Canvas size
+            gfx = createGraphics(1800, 400); // Create an off-screen graphics buffer
+            noLoop(); // No continuous drawing
+            updateText(); // Initial update to draw the text
+        }
+
+        function draw() {
+            background(255); // White background for the main canvas
+            pixelateText(); // Apply the bitmap effect
+        }
+
+        function pixelateText() {
+            for (let x = 0; x < gfx.width; x += blockSize) {
+                for (let y = 0; y < gfx.height; y += blockSize) {
+                    // Calculate the index for the pixels array
+                    let i = (y * gfx.width + x) * 4;
+                    // If the pixel is not white (indicating part of the text), draw a block on the main canvas
+                    if (gfx.pixels[i] < 255) { // Checking the red channel for simplicity
+                        fill(0); // Fill with black
+                        noStroke();
+                        rect(x, y, blockSize, blockSize); // Draw the block on the main canvas
+                    }
+                }
+            }
+        }
+
+        function updateText() {
+            gfx.background(255); // Clear the off-screen graphics with white
+            gfx.fill(0); // Set text color to black
+            let sourceText = document.getElementById('dynamicText').innerText; // Get the current text
+            gfx.textSize(100); // Set the font size
+            gfx.text(sourceText, 0, 100); // Draw the text off-screen
+            gfx.loadPixels(); // Load the pixel data from the off-screen graphics
+        }
+
+        function changeText() {
+            // Example of changing the text to something new
+            let newText = "New Text " + Math.floor(Math.random() * 100);
+            document.getElementById('dynamicText').innerText = newText;
+            updateText(); // Update the text in the off-screen graphics
+            redraw(); // Redraw with the new text
+        }
+    </script>
+</body>
+</html>

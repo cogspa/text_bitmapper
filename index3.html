@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bitmap Text Example</title>
+    <style>
+        p {
+            font-size: 100px; /* Step 2: Enlarge the text */
+            display: none; /* Hide the text after capturing it */
+        }
+    </style>
+</head>
+<body>
+    <p id="sourceText">Hello World</p>
+    <canvas id="textCanvas"></canvas>
+
+    <script>
+  let sourceText = 'Hello World'; // Text to display
+let fontSize = 100; // Font size for the text
+
+function setup() {
+  createCanvas(800, 200); // Canvas size
+  background(255); // White background
+
+  textSize(fontSize); // Set text size
+  fill(0); // Set text color to black
+
+  // Step 2: Draw Text
+  // Temporarily draw the text off-screen to read pixel data
+  text(sourceText, 0, fontSize);
+
+  // Step 3: Apply the bitmap effect
+  pixelateText(10); // Pixelate the text with a block size of 10 pixels
+}
+
+function pixelateText(blockSize) {
+  loadPixels(); // Load the pixel data of the canvas
+  
+  for (let x = 0; x < width; x += blockSize) {
+    for (let y = 0; y < height; y += blockSize) {
+      let i = (y * width + x) * 4; // Calculate the index in the pixel array
+      let brightness = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3; // Average RGB values for brightness
+      let color = brightness > 128 ? 255 : 0; // Determine color based on brightness
+      
+      // Draw the block
+      fill(color);
+      noStroke();
+      rect(x, y, blockSize, blockSize);
+    }
+  }
+}
+
+function draw() {
+  // The draw function is left empty as we don't need to continuously redraw in this example.
+}
+
+    </script>
+</body>
+</html>
